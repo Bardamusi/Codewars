@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print (list(islice(h(), 20)))
     print(list(islice(h(), 1690, 1691)))
     # print(list(islice(h(), 999999, 1000000)) )
-    n =
+    n = 10000
     print(n)
     print("---------")
     print(hamming(n))

@@ -74,19 +74,27 @@ def convertFracts(lst):
 
 
 def convertFractsFast(lst):
+    """
+    :param lst: lst: [ [numer_1, denom_1] , ... [numer_n, denom_n] ]
+    :return:  list such that N_1/D == numer_1/denom_1 ... N_n/D == numer_n,/denom_n.
+
+    """
     numer = [x[0] for x in lst]
     denom = [x[1] for x in lst]
     unique = sorted(list(set(denom)))
 
     d = 1
     for number in unique:
+        # We need to test if the smallest unique lcm fits as D, and if it doesn't
+        # We use that the next smallest possible D is the lcm of the lcm of the last d and the next smallest number
+        # in unique
         d = lcm(d, number)
-        print(d)
         bigN = [numer[i] * (d / denom[i]) for i in range(len(lst))]
         if test_sol(bigN):
             res = [[int(bigN[i]), int(d)] for i in range(len(lst))]
             return res
 
+    print("Aaaaah")
     return []
 
 
@@ -112,4 +120,4 @@ if __name__ == "__main__":
     a5 = [[27115, 5262], [87546, 11111111], [43216, 255689]]
     print(convertFractsFast(a5))
 
-    print("Test", int(27115 * 14949283383840498 / 5262))
+    print("Test", int(27115 * (14949283383840498 // 5262)))
