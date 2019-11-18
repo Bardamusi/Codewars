@@ -94,7 +94,6 @@ def convertFractsFast(lst):
             res = [[int(bigN[i]), int(d)] for i in range(len(lst))]
             return res
 
-    print("Aaaaah")
     return []
 
 

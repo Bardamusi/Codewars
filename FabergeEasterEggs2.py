@@ -15,7 +15,24 @@ Otherwise they crack.
 when the target floor can be any floor between 1 to this maximum height?
 
 """
-import math
+import timeit
+
+
+def gen_next_fact(m, n, stop):
+    """
+    :param m: m over n is starting point (so for example 5 over 3 is 5!/3!2!)
+    :param n: integer for m over n, note that this only works for n smaller than m/2
+    :param stop: index to stop at
+    :return: generates m over n+1
+    """
+    fact = nCr_alt(m, n)
+    yield fact
+
+    i = n + 1
+    while i <= stop:
+        fact = (fact * (m-i+1)) // i
+        yield fact
+        i += 1
 
 
 memo = {}
@@ -37,28 +54,35 @@ def nCr_alt(n, r):
         return 0
 
 
-def nCr(r,n):
-    f = math.factorial
-    return (f(n) // f(r)) // f(n-r)
-
-def height_quick3(n, m):
+def height_quick2(n, m):
+    """
+    :param n:
+    :param m:
+    :return:
+    Hundred times quicker :D
+    """
     if n == 0 or m == 0:
         return 0
     elif n > m:
         n = m
 
-    res = sum([nCr_alt(m, r) for r in range(n + 1, m + 1)])
-    res = ((2 ** 10000) - 1) - res
+    if n < (m - n):
+        res = sum(gen_next_fact(m, 1, n))
+    else:
+        res = sum(gen_next_fact(m, 1, m - n - 1))
+        res = ((2 ** m) - 2) - res
+
 
     return res
 
-def height_quick2(n, m):
+
+def height_quick(n, m):
     if n == 0 or m == 0:
         return 0
     elif n > m:
         n = m
 
-    if n  < (m - n):
+    if n < (m - n):
         res = sum([nCr_alt(m, r) for r in range(1, n + 1)])
     else:
         res = sum([nCr_alt(m, r) for r in range(n + 1, m + 1)])
@@ -68,65 +92,46 @@ def height_quick2(n, m):
     return res
 
 
-
-def height_quick(n, m):
-    if n == 0 or m == 0:
-        return 0
-    elif n > m:
-        n = m
-
-    res = 0
-    for r in range(1, n+1):
-        res += nCr_alt(m, r)
-
-    return res
-
-
-
-
-dic = {}
-def height(n, m):
-    if n == 0 or m == 0:
-        return 0
-    elif n >= m:
-        return (2 ** m) - 1
-    elif n == 1:
-        return m
-    elif n == 2:
-        return ((m ** 2) + m) // 2
-    elif (n, m) in dic:
-        return dic[(n, m)]
-
-    res = 1 + height(n, m - 1) + height(n - 1, m - 1)
-    dic[(n, m)] = res
-    return res
-
-
 if __name__ == "__main__":
-    import timeit
+    # m = 50
+    # summer = 0
+    # for i in gen_next_fact(m, 1, 8):
+    #     summer += i
+    #     print(i)
+    #
+    # print("here")
+    # print(summer)
+    # print(sum(gen_next_fact(m, 1, 8)))
+
+
     # print("----------")
-    # print(timeit.timeit("nCr(4477, 10000)", setup="from __main__ import nCr", number=1000))
     # print(timeit.timeit("nCr_alt(4477, 10000)", setup="from __main__ import nCr_alt", number=1000))
     # print("----------")
-
+    #
     # print(timeit.timeit("height_quick(477, 10000)", setup="from __main__ import height_quick", number=10))
     # print(timeit.timeit("height_quick2(477, 10000)", setup="from __main__ import height_quick2", number=10))
+    # print(timeit.timeit("height_quick(4477, 10000)", setup="from __main__ import height_quick", number=1))
     # print(timeit.timeit("height_quick2(4477, 10000)", setup="from __main__ import height_quick2", number=1))
-    # print(timeit.timeit("height_quick2(9477, 10000)", setup="from __main__ import height_quick2", number=1))
-    # print(timeit.timeit("height_quick3(9477, 10000)", setup="from __main__ import height_quick3", number=1))
+    # print(timeit.timeit("height_quick(9477, 10000)", setup="from __main__ import height_quick", number=1))
+    # print(timeit.timeit("height_quick(9477, 10000)", setup="from __main__ import height_quick", number=1))
 
+    m = 700
+    n = 691
+    print(height_quick(n,m) - height_quick2(n, m))
+
+    #
     # print("----------")
     # print(height_quick(0, 14), 0)
     # print(height_quick(2, 0), 0)
     # print(height_quick(2, 14), 105)
     # print(height_quick(7, 20), 137979)
-    #
+    # #
     # print("----------")
-    print(height_quick2(7, 500), 1507386560013475)
-    print(height_quick2(237, 500),
-                       431322842186730691997112653891062105065260343258332219390917925258990318721206767477889789852729810256244129132212314387344900067338552484172804802659)
-    print(height_quick2(477, 500),
-                       3273390607896141870013189696827599152216642046043064789483291368096133796404674554883270092325904157150886684127420959866658939578436425342102468327399)
+    # print(height_quick2(7, 500), 1507386560013475)
+    # print(height_quick2(237, 500),
+    #                    431322842186730691997112653891062105065260343258332219390917925258990318721206767477889789852729810256244129132212314387344900067338552484172804802659)
+    # print(height_quick2(477, 500),
+    #                    3273390607896141870013189696827599152216642046043064789483291368096133796404674554883270092325904157150886684127420959866658939578436425342102468327399)
 
     # print("----------")
     # print(height_quick2(477, 10000),
